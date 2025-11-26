@@ -5,6 +5,7 @@
     become: true
     roles:
       - common
+      - python3
       - docker
-      - reboot
+      - backend-and-frontend
 

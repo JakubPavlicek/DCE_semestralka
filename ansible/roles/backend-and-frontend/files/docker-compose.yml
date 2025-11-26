@@ -1,0 +1,33 @@
+services:
+  backend:
+    build:
+      context: ..
+      dockerfile: Dockerfile.backend
+    deploy:
+      replicas: 3
+    healthcheck:
+      test: [ "CMD-SHELL", "curl --fail http://localhost:5000/health || exit 1" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - backend_network
+      - frontend_network
+
+  frontend:
+    build:
+      context: ..
+      dockerfile: Dockerfile.frontend
+    ports:
+      - "8080:5000"
+    depends_on:
+      backend:
+        condition: service_healthy
+    networks:
+      - frontend_network
+
+networks:
+  backend_network:
+    driver: bridge
+  frontend_network:
+    driver: bridge

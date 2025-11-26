@@ -1,0 +1,45 @@
+# Deploying Backend and Frontend using Docker Compose.
+# Based on the following articles:
+# * https://www.baeldung.com/ops/docker-compose-ansible
+
+- name: Copy the Docker Compose project directory to the target host
+  ansible.builtin.copy:
+    src: "files/"
+    dest: "docker-files/"
+    force: yes
+
+- name: Copy the Backend Dockerfile to the target host
+  ansible.builtin.copy:
+    src: "../../../../.devcontainer/Dockerfile.backend"
+    dest: "docker-files/Dockerfile.backend"
+    force: yes
+
+- name: Copy the Frontend Dockerfile to the target host
+  ansible.builtin.copy:
+    src: "../../../../.devcontainer/Dockerfile.frontend"
+    dest: "docker-files/Dockerfile.frontend"
+    force: yes
+
+- name: Copy the Python directory to the target host
+  ansible.builtin.copy:
+    src: "../../../../python/"
+    dest: "docker-files/python/"
+    force: yes
+
+- name: Spin up the Backend and Frontend containers
+  community.docker.docker_compose_v2:
+    project_name: "backend_and_frontend"
+    project_src: "docker-files"
+    files:
+      - docker-compose.yml
+  register: output
+
+- name: Debug output
+  debug:
+    msg: "{{ output }}"
+
+- name: Assert all compose containers are running
+  assert:
+    that:
+      - output.containers | selectattr('State', 'equalto', 'running') | list | length == output.containers | length
+    msg: "Some containers failed to start"

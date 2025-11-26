@@ -1,2 +1,6 @@
 .idea
 *.tfvars
+*.tfstate*
+.terraform/
+.terraform.lock.hcl
+ansible/inventory.yml
