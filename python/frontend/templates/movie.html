@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Movie {{ movie_id }}</title>
+</head>
+<body>
+  <h1>Movie /movies/{{ movie_id }}</h1>
+  <p><a href="/">Home</a> | <a href="/movies">All movies</a></p>
+  {% if movie %}
+    <h2>{{ movie.name }}</h2>
+    <ul>
+      <li><strong>ID:</strong> {{ movie.id }}</li>
+      <li><strong>Name:</strong> {{ movie.name }}</li>
+      <li><strong>Year:</strong> {{ movie.year }}</li>
+    </ul>
+  {% else %}
+    <p style="color:red;">{{ error or 'Movie not found.' }}</p>
+  {% endif %}
+  <p>Response status: {{ status_code }}</p>
+  <p>Served by container: {{ container_id }}</p>
+  <h3>Endpoint Response</h3>
+  <pre>{{ result | tojson(indent=2) }}</pre>
+</body>
+</html>

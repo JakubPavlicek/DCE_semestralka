@@ -1,0 +1,10 @@
+# Playbook for complete site deployment
+---  
+  - name: Docker nodes setup
+    hosts: all
+    become: true
+    roles:
+      - common
+      - docker
+      - reboot
+

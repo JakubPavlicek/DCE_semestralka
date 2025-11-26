@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Find {{ name }}</title>
+</head>
+<body>
+  <h1>Find a movie</h1>
+  <p><a href="/">Home</a> | <a href="/movies">All movies</a></p>
+  <form id="find-form">
+    <label for="find-name">Movie name</label>
+    <input id="find-name" type="text" name="name" value="{{ name }}" placeholder="Type a movie name" required>
+    <button type="submit">Go</button>
+  </form>
+  {% if movie %}
+    <h2>Result</h2>
+    <ul>
+      <li><strong>ID:</strong> {{ movie.id }}</li>
+      <li><strong>Name:</strong> {{ movie.name }}</li>
+      <li><strong>Year:</strong> {{ movie.year }}</li>
+    </ul>
+  {% else %}
+    <p style="color:red;">{{ error or 'No movie matched that name.' }}</p>
+  {% endif %}
+  <p>Response status: {{ status_code }}</p>
+  <p>Served by container: {{ container_id }}</p>
+  <h3>Endpoint Response</h3>
+  <pre>{{ result | tojson(indent=2) }}</pre>
+  <script>
+    const form = document.getElementById("find-form");
+    form.addEventListener("submit", function (event) {
+      event.preventDefault();
+      const value = document.getElementById("find-name").value.trim();
+      if (!value) {
+        return;
+      }
+      window.location.href = "/find/" + encodeURIComponent(value);
+    });
+  </script>
+</body>
+</html>

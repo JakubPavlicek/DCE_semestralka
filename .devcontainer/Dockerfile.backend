@@ -1,0 +1,23 @@
+FROM ubuntu:20.04
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+RUN apt-get update && \
+    apt install -y python3 python3-pip curl iputils-ping -y
+
+# Install Flask
+RUN pip3 install flask
+RUN pip3 install psycopg2-binary
+RUN pip3 install Flask-SQLAlchemy
+
+RUN mkdir -p /opt/python
+COPY python/backend/ /opt/python/backend
+
+# Set working directory
+WORKDIR /opt/python/backend
+
+# Expose Flask port
+EXPOSE 5000
+
+# Start Flask application
+CMD ["python3", "backend.py"]

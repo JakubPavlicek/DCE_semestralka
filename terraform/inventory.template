@@ -1,0 +1,9 @@
+---
+all:
+  hosts:
+%{ for ip in ip_list ~}
+    ${ip}:
+%{ endfor ~}
+
+  vars:
+    ansible_user: ${vm_admin_user}

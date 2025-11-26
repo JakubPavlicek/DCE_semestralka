@@ -1,0 +1,47 @@
+services:
+  iac-dev-container:
+    image: ghcr.io/maxotta/iac-development-container:v1.09
+    volumes:
+      - "iac-dev-container-data:/var/iac-dev-container-data"
+      - "../..:/workspace"
+
+  backend:
+    build:
+      context: ..
+      dockerfile: .devcontainer/Dockerfile.backend
+    deploy:
+      replicas: 3
+    volumes:
+      - "../..:/workspace"
+    healthcheck:
+      test: [ "CMD-SHELL", "curl --fail http://localhost:5000/health || exit 1" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - backend_network
+      - frontend_network
+
+  frontend:
+    build:
+      context: ..
+      dockerfile: .devcontainer/Dockerfile.frontend
+    volumes:
+      - "../..:/workspace"
+    ports:
+      - "8080:5000"
+    depends_on:
+      backend:
+        condition: service_healthy
+    networks:
+      - frontend_network
+
+volumes:
+  iac-dev-container-data:
+    external: false
+
+networks:
+  backend_network:
+    driver: bridge
+  frontend_network:
+    driver: bridge

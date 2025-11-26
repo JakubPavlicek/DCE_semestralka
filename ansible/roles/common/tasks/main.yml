@@ -1,0 +1,6 @@
+- name: Install common utilities
+  apt:
+    pkg:
+      - mc
+      - curl
+      - jq

@@ -1,0 +1,16 @@
+- debug:
+    msg: Rebooting the host {{ inventory_hostname }}.
+
+- name: Reboot the host
+  ansible.builtin.reboot:
+
+- debug:
+    msg: "Waiting for the host {{ inventory_hostname }} to be available."
+
+- name: Wait for the host to be available
+  ansible.builtin.wait_for_connection:
+    delay: 60
+    timeout: 300
+
+- debug:
+    msg: "The host {{ inventory_hostname }} is running."

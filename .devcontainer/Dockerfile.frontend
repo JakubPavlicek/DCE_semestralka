@@ -1,0 +1,30 @@
+FROM ubuntu:20.04
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+RUN apt-get update && \
+    apt install curl iputils-ping -y && \
+    apt install -y python3 python3-pip && \
+    apt-get install -y locales tzdata postgresql-client && \
+    locale-gen en_US.UTF-8 && \
+    update-locale LANG=en_US.UTF-8 && \
+    rm -rf /var/lib/apt/lists/*
+
+# Install Flask
+RUN pip3 install flask
+
+RUN pip3 install psycopg2-binary
+RUN pip3 install Flask
+RUN pip3 install requests
+
+RUN mkdir -p /opt/python
+COPY python/frontend/ /opt/python/frontend
+
+# Set working directory
+WORKDIR /opt/python/frontend
+
+# Expose Flask port
+EXPOSE 5000
+
+# Start Flask application
+CMD ["python3", "frontend.py"]

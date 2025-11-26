@@ -1,0 +1,46 @@
+# Deploying ElasticSearch and Kibana using Docker Compose.
+# Based on the following articles:
+# * https://karthiksdevopsengineer.medium.com/setting-up-elasticsearch-and-kibana-single-node-with-docker-compose-329776fa3aee
+# * https://www.baeldung.com/ops/docker-compose-ansible
+
+- name: Copy the Docker Compose project directory to the target host
+  ansible.builtin.copy:
+    src: "files/"
+    dest: "docker-files/"
+    force: yes
+  
+- name: Spin up the ElasticSearch and Kibana containers
+  community.docker.docker_compose_v2:
+    project_name: "elastic-with-kibana"
+    project_src: "docker-files"
+    files:
+      - docker-compose.yml
+  register: output
+
+- name: Debug output
+  debug:
+    msg: "{{ output }}"
+
+- name: Verify that all services are running
+  ansible.builtin.assert:
+    that:
+      - elasticsearch == "1"
+      - kibana == "1"
+    msg: "All services are running"
+  vars:
+    elasticsearch: >-
+      {{ output.containers | selectattr("Service", "equalto", "es01") | selectattr("State", "equalto", "running") | length}}
+    kibana: >-
+      {{ output.containers | selectattr("Service", "equalto", "kibana") | selectattr("State", "equalto", "running") | length }}
+
+- name: Get self-generated ES CA certificate
+  ansible.builtin.shell: |
+    container=`docker ps | awk '/es01/ { print $1 }'`
+    docker cp ${container}:/usr/share/elasticsearch/config/certs/ca/ca.crt /tmp/http_ca.crt
+
+- name: Copy the self-generated ES CA certificate to the host
+  ansible.builtin.fetch:
+    src: /tmp/http_ca.crt
+    dest: "{{ playbook_dir }}/../python/"
+    flat: yes
+    fail_on_missing: yes
