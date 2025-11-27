@@ -35,7 +35,9 @@ terraform init
 terraform apply -auto-approve
 ```
 
-Access the frontend at the generated VM's IP address.
+Access the frontend at the generated VM's IP address at port 8080 (e.g. http://147.228.173.15:8080). \
+U can also SSH into the VM: `ssh nodeadm@<vm_ip>`
+> If the SSH didn't work, remove the known_hosts: `rm -rf /root/.ssh/known_hosts`
 
 ### Implementation
 
