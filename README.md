@@ -131,3 +131,7 @@ sudo minikube tunnel
 ```
 
 Access the frontend: http://localhost:80
+
+### Implementation
+
+The Kubernetes manifests are located in: `k8s`
